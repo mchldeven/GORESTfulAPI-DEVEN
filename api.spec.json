@@ -32,15 +32,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "number"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        }
+                        "$ref": "#/components/schemas/Category"
                       }
                     }
                   }
@@ -52,6 +44,8 @@
       },
       "post": {
         "tags": ["Category API"],
+        "description": "Create New Category",
+        "summary": "Create New Category",
         "requestBody": {
           "content": {
             "application/json": {
@@ -74,16 +68,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "id": {
+                    "code": {
                       "type": "number"
                     },
-                    "name": {
+                    "status": {
                       "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Category"
                     }
                   }
                 }
               }
             }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
           }
         }
       }
