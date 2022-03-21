@@ -14,6 +14,7 @@
     "/categories": {
       "get": {
         "tags": ["Category API"],
+        "summary": "List all category",
         "description": "list all Categories",
         "responses": {
           "200": {
@@ -63,6 +64,78 @@
         "responses": {
           "200": {
             "description": "Succes Create Category",
+            "content": {
+              "appliaction/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Category"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "categories/{categoryId}": {
+      "get": {
+        "tags": ["Category API"],
+        "summary": "Get category by Id",
+        "description": "Get category by id",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "Category Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get category",
+            "content": {
+              "appliaction/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Category"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Category API"],
+        "summary": "Update category by Id",
+        "description": "Update category by Id",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "Category Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get category",
             "content": {
               "appliaction/json": {
                 "schema": {
