@@ -1,17 +1,24 @@
 package repository
 
-type CategoryRepository struct {
+import (
+	"context"
+	"database/sql"
+	"deven/api/helper"
+	"deven/api/model/domain"
+	"errors"
+)
 
+type CategoryRepositoryImpl struct {
 }
 
-func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, category doamin.Category) domain.Category {
-	sql := "insert into customer(name) values (?)"
-	result, err := tx.ExecContext(ctx, SQL, Category.Name)
+func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
+	SQL := "insert into customer(name) values (?)"
+	result, err := tx.ExecContext(ctx, SQL, category.Name)
 	helper.PanicIfError(err)
-	}
-	
+
 	id, err := result.LastInsertId()
-	helper.PanicIfError(err)
+	if err != nil {
+		panic(err)
 	}
 
 	category.Id = int(id)
@@ -19,8 +26,7 @@ func (repository *CategoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, 
 }
 
 func (repository *CategoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category {
-	panic("implement me")
-	SQL := "update category set name? where id = ?"
+	SQL := "update category set name = ? where id = ?"
 	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Id)
 	helper.PanicIfError(err)
 
@@ -40,15 +46,14 @@ func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.
 
 	category := domain.Category{}
 	if rows.Next() {
-		err := rows.Scan(&category.Id, &category.Name)
+		err := rows.Scan(&categoryId, &categoryName)
 		helper.PanicIfError(err)
-		return category, nil
 	} else {
 		return category, errors.New("category is not found")
 	}
 }
 
-func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx, category domain.Category) []domain.Category {
+func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Category {
 	SQL := "select id, name from category"
 	rows, err := tx.QueryContext(ctx, SQL)
 	helper.PanicIfError(err)
@@ -56,7 +61,7 @@ func (repository *CategoryRepositoryImpl) FindAll(ctx context.Context, tx *sql.T
 	var categories []domain.Category
 	for rows.Next() {
 		category := domain.Category{}
-		err := rows.Scan(category.Id, &category.Name)
+		err := rows.Scan(&category.Id, &category.Name)
 		helper.PanicIfError(err)
 		categories = append(categories, category)
 	}

@@ -4,5 +4,5 @@ import (
 	"context"
 )
 type CategoryService interface {
-	Create(ctx context.Context, request web.CategoryCreateRequest)
-}
+	Create(ctx context.Context , request web.CategoryCreateRequest)
+} 
