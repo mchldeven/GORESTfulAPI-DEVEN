@@ -4,41 +4,61 @@ import (
 	"context"
 	"database/sql"
 	"deven/api/helper"
+	"deven/api/model/domain"
 	"deven/api/model/web"
 	"deven/api/repository"
 )
 
 type CategoryServiceImpl struct {
 	CategoryRepository repository.CategoryRepository
-	DB                 *sql.DB
+	DB *sql.DB
 }
 
-func (servoce *CategoryServiceImpl) Create(ctx context.Context, request web.CategoryCreateRequest) web.CategoryResponse {
+func (service *CategoryServiceImpl) Create(ctx context.Context, request web.CategoryCreateRequest) web.CategoryResponse {
 	tx, err := service.DB.Begin()
 	helper.PanicIfError(err)
-	defer func() {
-		err := recover()
-		if err != nil {
-			tx.Rollback()
-			panic(err)
-		} else {
-			tx.Commit()
-		}
-	}()
+	defer helper.CommitOrRollback(tx)
+
+	category := domain.Category{
+		Name: request.Name,
+	}
+
+	category = service.CategoryRepository.Save(ctx, tx, category)
+	
+	return helper.ToCategortResponse(category)
 }
 
-func (servoce *CategoryServiceImpl) Update(ctx context.Context, request web.CategoryUpdateRequest) web.CategoryResponse {
-	panic("implement me")
+func (service *CategoryServiceImpl) Update(ctx context.Context, request web.CategoryUpdateRequest) web.CategoryResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+	
+	category = service.CategoryRepository.FindById(ctx, tx, request.Id)
+	helper.PanicIfError(err)
+
+	category.Name = request.Name
+
+	category = service.CategoryRepository.Update(ctx, tx, category)
+
+	return helper.ToCategoryResponse(category)
 }
 
-func (servoce *CategoryServiceImpl) Delete(ctx context.Context, categoryId int)  {
-	panic("implement me")
+func (service *CategoryServiceImpl) Delete(ctx context.Context, categoryId int) {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	service.CategoryRepository.Delete(ctx)
 }
 
-func (servoce *CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
-	panic("implement me")
+func (service *CategoryServiceImpl) FindById(ctx context.Context, categoryId int) web.CategoryResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
 }
 
-func (servoce *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
-	panic("implement me")
+func (service *CategoryServiceImpl) FindAll(ctx context.Context) []web.CategoryResponse {
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
 }

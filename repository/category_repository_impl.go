@@ -46,7 +46,7 @@ func (repository *CategoryRepositoryImpl) FindById(ctx context.Context, tx *sql.
 
 	category := domain.Category{}
 	if rows.Next() {
-		err := rows.Scan(&categoryId, &categoryName)
+		err := rows.Scan(&categoryId, &category.Name)
 		helper.PanicIfError(err)
 	} else {
 		return category, errors.New("category is not found")
