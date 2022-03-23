@@ -11,3 +11,11 @@ func ToCategoryResponse(category domain.Category) web.CategoryResponse {
 		Name: category.Name, 
 	}
 }
+
+func ToCategoryResponses(categories []domain.Category) []web.CategoryResponse {
+	var CategoryResponses []web.CategoryResponse
+	for _, category := range categories {
+		CategoryResponses = append(CategoryResponses, ToCategoryResponse(category))
+	} 
+	return CategoryResponses
+}
