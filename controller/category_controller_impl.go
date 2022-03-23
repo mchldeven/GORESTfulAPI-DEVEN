@@ -4,7 +4,6 @@ import (
 	"deven/api/helper"
 	"deven/api/model/web"
 	"deven/api/service"
-	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -16,10 +15,8 @@ type CategoryControllerImpl struct {
 }
 
 func(controller *CategoryControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-decoder := json.NewDecoder(request.Body)
 	categoryCreateRequest := web.CategoryCreateRequest{}
-	err := decoder.Decode(&categoryCreateRequest)
-	helper.PanicIfError(err)
+	helper.ReadFromRequestBody(request, &categoryCreateRequest)
 
 	categoryResponse := controller.CategoryService.Create(request.Context(), categoryCreateRequest)
 	webResponse := web.WebResponse{
@@ -28,24 +25,19 @@ decoder := json.NewDecoder(request.Body)
 		Data: categoryResponse,
 	}
 
-	writer.Header().Add("contect-Type", "application/json")
-	encoder := json.NewEncoder(writer)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)	
+	helper.WriteToResponseBody(writer, webResponse)
 
 
 }
 
 func (controller *CategoryControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	decoder := json.NewDecoder(request.Body)
 	categoryUpdateRequest := web.CategoryUpdateRequest{}
-	err := decoder.Decode(&categoryUpdateRequest)
-	helper.PanicIfError(err)
+	helper.ReadFromRequestBody(request, &categoryUpdateRequest)
 
-	categoryUpdateRequest.Id = params.ByName("categoryId")
+	categoryId := params.ByName("categoryId")
 	id, err := strconv.Atoi(categoryId)
 	helper.PanicIfError(err)
-
+	
 	categoryUpdateRequest.Id = id
 
 	categoryResponse := controller.CategoryService.Update(request.Context(), categoryUpdateRequest)
@@ -55,20 +47,45 @@ func (controller *CategoryControllerImpl) Update(writer http.ResponseWriter, req
 		Data: categoryResponse,
 	}
 
-	writer.Header().Add("contect-Type", "application/json")
-	encoder := json.NewEncoder(writer)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(writer, webResponse)
 }
 
 func (CategoryController *CategoryControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	panic("implement me")
+	categoryId := params.ByName("categoryId")
+	id, err := strconv.Atoi(categoryId)
+	helper.PanicIfError(err)
+	
+	controller.CategoryService.Delete(request.Context(), id)
+	webResponse := web.WebResponse{
+		Code: 200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
 }
 
 func (CategoryController *CategoryControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	panic("implement me")
+	categoryId := params.ByName("categoryId")
+	id, err := strconv.Atoi(categoryId)
+	helper.PanicIfError(err)
+	
+	categoryResponse := controller.CategoryService.FindById(request.Context(), id)
+	webResponse := web.WebResponse{
+		Code: 200,
+		Status: "OK",
+		Data: categoryResponse,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
 }
 
 func (CategoryController *CategoryControllerImpl) FindByAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	panic("implement me")
+	categoryResponses := controller.CategoryService.FindByAll(request.Context())
+	webResponse := web.WebResponse{
+		Code: 200,
+		Status: "OK",
+		Data: categoryResponses,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
 }
