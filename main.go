@@ -1,14 +1,9 @@
-package main
-
-import "github.com/julienschmidt/httprouter"
+package main 
 
 func main() {
-
 	
-
 
 	router := httprouter.New()
 
 	router
-
 }
