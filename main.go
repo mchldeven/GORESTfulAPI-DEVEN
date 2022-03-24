@@ -3,8 +3,11 @@ package main
 import (
 	"deven/api/app"
 	"deven/api/controller"
+	"deven/api/exception"
 	"deven/api/helper"
+	"deven/api/middleware"
 	"deven/api/repository"
+	"deven/api/service"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
